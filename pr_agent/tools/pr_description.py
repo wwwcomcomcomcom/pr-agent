@@ -99,7 +99,7 @@ class PRDescription:
                                 'config': dict(get_settings().config)}
             get_logger().debug("Relevant configs", artifact=relevant_configs)
             if get_settings().config.publish_output and not get_settings().config.get('is_auto_command', False):
-                self.git_provider.publish_comment("Preparing PR description...", is_temporary=True)
+                self.git_provider.publish_comment(get_ui_string('preparing_pr_description', 'Preparing PR description...'), is_temporary=True)
 
             # ticket extraction if exists
             await extract_and_cache_pr_tickets(self.git_provider, self.vars)
@@ -170,10 +170,11 @@ class PRDescription:
 
                 # publish description
                 if get_settings().pr_description.publish_description_as_comment:
-                    full_markdown_description = f"## Title\n\n{pr_title.strip()}\n\n___\n{pr_body}"
+                    _title_header = get_ui_string('description_title_header', '## Title')
+                    full_markdown_description = f"{_title_header}\n\n{pr_title.strip()}\n\n___\n{pr_body}"
                     if get_settings().pr_description.publish_description_as_comment_persistent:
                         self.git_provider.publish_persistent_comment(full_markdown_description,
-                                                                     initial_header="## Title",
+                                                                     initial_header=_title_header,
                                                                      update_header=True,
                                                                      name="describe",
                                                                      final_update_message=False, )
@@ -187,7 +188,10 @@ class PRDescription:
                         latest_commit_url = self.git_provider.get_latest_commit_url()
                         if latest_commit_url:
                             pr_url = self.git_provider.get_pr_url()
-                            update_comment = f"**[PR Description]({pr_url})** updated to latest commit ({latest_commit_url})"
+                            update_comment = get_ui_string(
+                                'pr_description_updated',
+                                '**[PR Description]({pr_url})** updated to latest commit ({latest_commit_url})'
+                            ).format(pr_url=pr_url, latest_commit_url=latest_commit_url)
                             self.git_provider.publish_comment(update_comment)
                 self.git_provider.remove_initial_comment()
             else:

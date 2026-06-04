@@ -18,8 +18,9 @@ from pr_agent.algo.pr_processing import (add_ai_metadata_to_diff_files,
                                          get_pr_diff, get_pr_multi_diffs,
                                          retry_with_fallback_models)
 from pr_agent.algo.token_handler import TokenHandler
-from pr_agent.algo.utils import (ModelType, load_yaml, replace_code_tags,
-                                 show_relevant_configurations, get_max_tokens, clip_tokens, get_model)
+from pr_agent.algo.utils import (ModelType, get_ui_string, load_yaml,
+                                 replace_code_tags, show_relevant_configurations,
+                                 get_max_tokens, clip_tokens, get_model)
 from pr_agent.config_loader import get_settings
 from pr_agent.git_providers import (AzureDevopsProvider, GithubProvider,
                                     GitLabProvider, get_git_provider,
@@ -107,7 +108,7 @@ class PRCodeSuggestions:
                 if self.git_provider.is_supported("gfm_markdown"):
                     self.progress_response = self.git_provider.publish_comment(self.progress)
                 else:
-                    self.git_provider.publish_comment("Preparing suggestions...", is_temporary=True)
+                    self.git_provider.publish_comment(get_ui_string('preparing_suggestions', 'Preparing suggestions...'), is_temporary=True)
 
             # # call the model to get the suggestions, and self-reflect on them
             # if not self.is_extended:
@@ -157,7 +158,7 @@ class PRCodeSuggestions:
                     if get_settings().pr_code_suggestions.persistent_comment: # true by default
                         self.publish_persistent_comment_with_history(self.git_provider,
                                                                      pr_body,
-                                                                     initial_header="## PR Code Suggestions ✨",
+                                                                     initial_header=get_ui_string('pr_code_suggestions_header', '## PR Code Suggestions ✨'),
                                                                      update_header=True,
                                                                      name="suggestions",
                                                                      final_update_message=False,
@@ -190,7 +191,7 @@ class PRCodeSuggestions:
                 else:
                     try:
                         self.git_provider.remove_initial_comment()
-                        self.git_provider.publish_comment(f"Failed to generate code suggestions for PR")
+                        self.git_provider.publish_comment(get_ui_string('failed_generate_code_suggestions', 'Failed to generate code suggestions for PR'))
                     except Exception as e:
                         get_logger().exception(f"Failed to update persistent review, error: {e}")
 
@@ -208,7 +209,9 @@ class PRCodeSuggestions:
         return pr_body
 
     async def publish_no_suggestions(self):
-        pr_body = "## PR Code Suggestions ✨\n\nNo code suggestions found for the PR."
+        _header = get_ui_string('pr_code_suggestions_header', '## PR Code Suggestions ✨')
+        _body = get_ui_string('no_code_suggestions_body', 'No code suggestions found for the PR.')
+        pr_body = f"{_header}\n\n{_body}"
         if (get_settings().config.publish_output and
                 get_settings().pr_code_suggestions.get('publish_output_no_suggestions', True)):
             get_logger().warning('No code suggestions found for the PR.')

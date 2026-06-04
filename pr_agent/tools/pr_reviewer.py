@@ -14,8 +14,9 @@ from pr_agent.algo.pr_processing import (add_ai_metadata_to_diff_files,
                                          retry_with_fallback_models)
 from pr_agent.algo.token_handler import TokenHandler
 from pr_agent.algo.utils import (ModelType, PRReviewHeader,
-                                 convert_to_markdown_v2, github_action_output,
-                                 load_yaml, show_relevant_configurations)
+                                 convert_to_markdown_v2, get_ui_string,
+                                 github_action_output, load_yaml,
+                                 show_relevant_configurations)
 from pr_agent.config_loader import get_settings
 from pr_agent.git_providers import (get_git_provider,
                                     get_git_provider_with_context)
@@ -145,12 +146,15 @@ class PRReviewer:
                 if hasattr(self.git_provider, "previous_review"):
                     previous_review_url = self.git_provider.previous_review.html_url
                 if get_settings().config.publish_output:
-                    self.git_provider.publish_comment(f"Incremental Review Skipped\n"
-                                    f"No files were changed since the [previous PR Review]({previous_review_url})")
+                    _header = get_ui_string('incremental_review_skipped_header', 'Incremental Review Skipped')
+                    _body = get_ui_string('incremental_review_no_new_files',
+                                          'No files were changed since the [previous PR Review]({previous_review_url})'
+                                          ).format(previous_review_url=previous_review_url)
+                    self.git_provider.publish_comment(f"{_header}\n{_body}")
                 return None
 
             if get_settings().config.publish_output and not get_settings().config.get('is_auto_command', False):
-                self.git_provider.publish_comment("Preparing review...", is_temporary=True)
+                self.git_provider.publish_comment(get_ui_string('preparing_review', 'Preparing review...'), is_temporary=True)
 
             await retry_with_fallback_models(self._prepare_prediction, model_type=ModelType.REGULAR)
             if not self.prediction:
@@ -173,7 +177,7 @@ class PRReviewer:
             if get_settings().pr_reviewer.persistent_comment and not self.incremental.is_incremental:
                 final_update_message = get_settings().pr_reviewer.final_update_message
                 self.git_provider.publish_persistent_comment(pr_review,
-                                                            initial_header=f"{PRReviewHeader.REGULAR.value} 🔍",
+                                                            initial_header=f"{get_ui_string('pr_reviewer_header', PRReviewHeader.REGULAR.value)} 🔍",
                                                             update_header=True,
                                                             final_update_message=final_update_message, )
             else:
@@ -184,7 +188,8 @@ class PRReviewer:
             get_logger().error(f"Failed to review PR: {e}")
 
     def _should_publish_review_no_suggestions(self, pr_review: str) -> bool:
-        return get_settings().pr_reviewer.get('publish_output_no_suggestions', True) or "No major issues detected" not in pr_review
+        no_major_issues = get_ui_string('no_major_issues', 'No major issues detected')
+        return get_settings().pr_reviewer.get('publish_output_no_suggestions', True) or no_major_issues not in pr_review
 
     async def _prepare_prediction(self, model: str) -> None:
         self.patches_diff = get_pr_diff(self.git_provider,
@@ -422,8 +427,10 @@ class PRReviewer:
             is_auto_approved = self.git_provider.auto_approve()
             if is_auto_approved:
                 get_logger().info("Auto-approved PR")
-                self.git_provider.publish_comment("Auto-approved PR")
+                self.git_provider.publish_comment(get_ui_string('auto_approved_pr', 'Auto-approved PR'))
         else:
             get_logger().info("Auto-approval option is disabled")
-            self.git_provider.publish_comment("Auto-approval option for PR-Agent is disabled. "
-                                              "You can enable it via a [configuration file](https://github.com/Codium-ai/pr-agent/blob/main/docs/REVIEW.md#auto-approval-1)")
+            self.git_provider.publish_comment(get_ui_string(
+                'auto_approval_disabled',
+                'Auto-approval option for PR-Agent is disabled. '
+                'You can enable it via a [configuration file](https://github.com/Codium-ai/pr-agent/blob/main/docs/REVIEW.md#auto-approval-1)'))

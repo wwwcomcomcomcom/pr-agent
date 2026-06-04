@@ -7,7 +7,7 @@ from pydantic import BaseModel, Field
 
 from pr_agent.algo import MAX_TOKENS
 from pr_agent.algo.token_handler import TokenHandler
-from pr_agent.algo.utils import get_max_tokens
+from pr_agent.algo.utils import get_max_tokens, get_ui_string
 from pr_agent.config_loader import get_settings
 from pr_agent.git_providers import get_git_provider
 from pr_agent.log import get_logger
@@ -259,7 +259,7 @@ class PRSimilarIssue:
 
     async def run(self):
         if not self.supported:
-            message = "The /similar_issue tool is currently supported only for GitHub."
+            message = get_ui_string('similar_issue_github_only', 'The /similar_issue tool is currently supported only for GitHub.')
             if get_settings().config.publish_output:
                 try:
                     from pr_agent.git_providers import get_git_provider_with_context

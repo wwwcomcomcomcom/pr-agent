@@ -45,3 +45,43 @@ requires_further_verification = "Requires further human verification:"
 pr_type = "PR Type"
 file_walkthrough = "File Walkthrough"
 diagram_walkthrough = "Diagram Walkthrough"
+
+# Progress/status messages
+preparing_review = "Preparing review..."
+preparing_pr_description = "Preparing PR description..."
+preparing_suggestions = "Preparing suggestions..."
+generating_documentation = "Generating Documentation..."
+preparing_pr_labels = "Preparing PR labels..."
+preparing_changelog_updates = "Preparing changelog updates..."
+preparing_answer = "Preparing answer..."
+
+# Code suggestions
+pr_code_suggestions_header = "## PR Code Suggestions ✨"
+no_code_suggestions_body = "No code suggestions found for the PR."
+failed_generate_code_suggestions = "Failed to generate code suggestions for PR"
+
+# Documentation
+no_code_documentation = "No code documentation found to improve this PR."
+
+# Incremental review
+incremental_review_skipped_header = "Incremental Review Skipped"
+incremental_review_no_new_files = "No files were changed since the [previous PR Review]({previous_review_url})"
+
+# Auto-approval
+auto_approved_pr = "Auto-approved PR"
+auto_approval_disabled = "Auto-approval option for PR-Agent is disabled. You can enable it via a [configuration file](https://github.com/Codium-ai/pr-agent/blob/main/docs/REVIEW.md#auto-approval-1)"
+
+# Description update
+pr_description_updated = "**[PR Description]({pr_url})** updated to latest commit ({latest_commit_url})"
+description_title_header = "## Title"
+
+# Changelog updates
+changelog_updates_header = "**Changelog updates:** 🔄"
+changelog_updates_header_alt = "**Changelog updates: 🔄**"
+
+# Progress comment
+generating_pr_code_suggestions = "## Generating PR code suggestions"
+work_in_progress = "Work in progress ..."
+
+# Tool availability
+similar_issue_github_only = "The /similar_issue tool is currently supported only for GitHub."

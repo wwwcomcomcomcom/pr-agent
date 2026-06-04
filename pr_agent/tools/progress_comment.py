@@ -1,3 +1,4 @@
+from pr_agent.algo.utils import get_ui_string
 from pr_agent.config_loader import get_settings
 
 DEFAULT_PROGRESS_GIF_WIDTH = 48
@@ -26,8 +27,10 @@ def build_progress_comment() -> str:
     gif_url = get_progress_gif_url()
     gif_width = get_progress_gif_width()
 
+    _title = get_ui_string('generating_pr_code_suggestions', '## Generating PR code suggestions')
+    _wip = get_ui_string('work_in_progress', 'Work in progress ...')
     return (
-        "## Generating PR code suggestions\n\n"
-        "\nWork in progress ...<br>\n"
-        f"<img src=\"{gif_url}\" alt=\"Work in progress\" width=\"{gif_width}\">"
+        f"{_title}\n\n"
+        f"\n{_wip}<br>\n"
+        f"<img src=\"{gif_url}\" alt=\"{_wip}\" width=\"{gif_width}\">"
     )

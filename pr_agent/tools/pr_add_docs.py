@@ -9,7 +9,7 @@ from pr_agent.algo.ai_handlers.base_ai_handler import BaseAiHandler
 from pr_agent.algo.ai_handlers.litellm_ai_handler import LiteLLMAIHandler
 from pr_agent.algo.pr_processing import get_pr_diff, retry_with_fallback_models
 from pr_agent.algo.token_handler import TokenHandler
-from pr_agent.algo.utils import load_yaml
+from pr_agent.algo.utils import get_ui_string, load_yaml
 from pr_agent.config_loader import get_settings
 from pr_agent.git_providers import get_git_provider
 from pr_agent.git_providers.git_provider import get_main_pr_language
@@ -51,7 +51,7 @@ class PRAddDocs:
         try:
             get_logger().info('Generating code Docs for PR...')
             if get_settings().config.publish_output:
-                self.git_provider.publish_comment("Generating Documentation...", is_temporary=True)
+                self.git_provider.publish_comment(get_ui_string('generating_documentation', 'Generating Documentation...'), is_temporary=True)
 
             get_logger().info('Preparing PR documentation...')
             await retry_with_fallback_models(self._prepare_prediction)
@@ -105,7 +105,7 @@ class PRAddDocs:
         docs = []
 
         if not data['Code Documentation']:
-            return self.git_provider.publish_comment('No code documentation found to improve this PR.')
+            return self.git_provider.publish_comment(get_ui_string('no_code_documentation', 'No code documentation found to improve this PR.'))
 
         for d in data['Code Documentation']:
             try:

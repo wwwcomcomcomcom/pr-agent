@@ -9,7 +9,7 @@ from pr_agent.algo.ai_handlers.base_ai_handler import BaseAiHandler
 from pr_agent.algo.ai_handlers.litellm_ai_handler import LiteLLMAIHandler
 from pr_agent.algo.pr_processing import get_pr_diff, retry_with_fallback_models
 from pr_agent.algo.token_handler import TokenHandler
-from pr_agent.algo.utils import get_user_labels, load_yaml, set_custom_labels
+from pr_agent.algo.utils import get_ui_string, get_user_labels, load_yaml, set_custom_labels
 from pr_agent.config_loader import get_settings
 from pr_agent.git_providers import get_git_provider
 from pr_agent.git_providers.git_provider import get_main_pr_language
@@ -70,7 +70,7 @@ class PRGenerateLabels:
         try:
             get_logger().info(f"Generating a PR labels {self.pr_id}")
             if get_settings().config.publish_output:
-                self.git_provider.publish_comment("Preparing PR labels...", is_temporary=True)
+                self.git_provider.publish_comment(get_ui_string('preparing_pr_labels', 'Preparing PR labels...'), is_temporary=True)
 
             await retry_with_fallback_models(self._prepare_prediction)
 

@@ -7,7 +7,7 @@ from pr_agent.algo.ai_handlers.base_ai_handler import BaseAiHandler
 from pr_agent.algo.ai_handlers.litellm_ai_handler import LiteLLMAIHandler
 from pr_agent.algo.pr_processing import get_pr_diff, retry_with_fallback_models
 from pr_agent.algo.token_handler import TokenHandler
-from pr_agent.algo.utils import ModelType
+from pr_agent.algo.utils import ModelType, get_ui_string
 from pr_agent.config_loader import get_settings
 from pr_agent.git_providers import get_git_provider, GitLabProvider
 from pr_agent.git_providers.git_provider import get_main_pr_language
@@ -56,7 +56,7 @@ class PRQuestions:
                             'config': dict(get_settings().config)}
         get_logger().debug("Relevant configs", artifacts=relevant_configs)
         if get_settings().config.publish_output:
-            self.git_provider.publish_comment("Preparing answer...", is_temporary=True)
+            self.git_provider.publish_comment(get_ui_string('preparing_answer', 'Preparing answer...'), is_temporary=True)
 
         # identify image
         img_path = self.identify_image_in_comment()

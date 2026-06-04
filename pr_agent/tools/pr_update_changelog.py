@@ -10,7 +10,7 @@ from pr_agent.algo.ai_handlers.base_ai_handler import BaseAiHandler
 from pr_agent.algo.ai_handlers.litellm_ai_handler import LiteLLMAIHandler
 from pr_agent.algo.pr_processing import get_pr_diff, retry_with_fallback_models
 from pr_agent.algo.token_handler import TokenHandler
-from pr_agent.algo.utils import ModelType, show_relevant_configurations
+from pr_agent.algo.utils import ModelType, get_ui_string, show_relevant_configurations
 from pr_agent.config_loader import get_settings
 from pr_agent.git_providers import GithubProvider, get_git_provider
 from pr_agent.git_providers.git_provider import get_main_pr_language
@@ -72,7 +72,7 @@ class PRUpdateChangelog:
             return
 
         if get_settings().config.publish_output:
-            self.git_provider.publish_comment("Preparing changelog updates...", is_temporary=True)
+            self.git_provider.publish_comment(get_ui_string('preparing_changelog_updates', 'Preparing changelog updates...'), is_temporary=True)
 
         await retry_with_fallback_models(self._prepare_prediction, model_type=ModelType.WEAK)
 
@@ -89,7 +89,7 @@ class PRUpdateChangelog:
             if self.commit_changelog:
                 self._push_changelog_update(new_file_content, answer)
             else:
-                self.git_provider.publish_comment(f"**Changelog updates:** 🔄\n\n{answer}")
+                self.git_provider.publish_comment(f"{get_ui_string('changelog_updates_header', '**Changelog updates:** 🔄')}\n\n{answer}")
 
     async def _prepare_prediction(self, model: str):
         self.patches_diff = get_pr_diff(self.git_provider, self.token_handler, model)
@@ -165,7 +165,7 @@ class PRUpdateChangelog:
                 self.git_provider.pr.create_review(commit=last_commit_id, comments=[d])
         except Exception:
             # we can't create a review for some reason, let's just publish a comment
-            self.git_provider.publish_comment(f"**Changelog updates: 🔄**\n\n{answer}")
+            self.git_provider.publish_comment(f"{get_ui_string('changelog_updates_header_alt', '**Changelog updates: 🔄**')}\n\n{answer}")
 
     def _get_default_changelog(self):
         example_changelog = \
