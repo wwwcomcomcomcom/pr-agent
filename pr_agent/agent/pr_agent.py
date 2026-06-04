@@ -75,27 +75,36 @@ class PRAgent:
         # Update settings from args
         args = update_settings_from_args(args)
 
-        # Append the response language in the extra instructions
+        # Inject response language instructions into prompts and extra_instructions
         response_language = get_settings().config.get('response_language', 'en-us')
         if response_language.lower() != 'en-us':
             get_logger().info(f'User has set the response language to: {response_language}')
+            lang_instruction_text = (
+                f"Your response MUST be written in the language corresponding to locale code: "
+                f"'{response_language}'. This applies to ALL text you output."
+            )
+            # Prepend language directive to every system prompt so it takes precedence
+            # over the long English instructions that follow.
+            lang_prefix = (
+                f"IMPORTANT: Respond entirely in the language for locale '{response_language}'. "
+                f"Do not use English except for code, file names, and technical identifiers.\n\n"
+            )
             for key in get_settings():
                 setting = get_settings().get(key)
                 if str(type(setting)) == "<class 'dynaconf.utils.boxing.DynaBox'>":
+                    # Prepend to system prompts
+                    if hasattr(setting, 'system') and isinstance(setting.system, str):
+                        if not setting.system.startswith("IMPORTANT: Respond entirely"):
+                            setting.system = lang_prefix + setting.system
+                    # Also append to extra_instructions as a secondary reinforcement
                     if hasattr(setting, 'extra_instructions'):
                         current_extra_instructions = setting.extra_instructions
-                        
-                        # Define the language-specific instruction and the separator
-                        lang_instruction_text = f"Your response MUST be written in the language corresponding to locale code: '{response_language}'. This is crucial."
                         separator_text = "\n======\n\nIn addition, "
-
-                        # Check if the specific language instruction is already present to avoid duplication
                         if lang_instruction_text not in str(current_extra_instructions):
-                            if current_extra_instructions: # If there's existing text
+                            if current_extra_instructions:
                                 setting.extra_instructions = str(current_extra_instructions) + separator_text + lang_instruction_text
-                            else: # If extra_instructions was None or empty
+                            else:
                                 setting.extra_instructions = lang_instruction_text
-                        # If lang_instruction_text is already present, do nothing.
 
         action = action.lstrip("/").lower()
         if action not in command2class:

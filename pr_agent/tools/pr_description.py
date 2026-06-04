@@ -16,8 +16,8 @@ from pr_agent.algo.pr_processing import (OUTPUT_BUFFER_TOKENS_HARD_THRESHOLD,
                                          retry_with_fallback_models)
 from pr_agent.algo.token_handler import TokenHandler
 from pr_agent.algo.utils import (ModelType, PRDescriptionHeader, clip_tokens,
-                                 get_max_tokens, get_user_labels, load_yaml,
-                                 set_custom_labels,
+                                 get_max_tokens, get_ui_string, get_user_labels,
+                                 load_yaml, set_custom_labels,
                                  show_relevant_configurations)
 from pr_agent.config_loader import get_settings
 from pr_agent.git_providers import (GithubProvider, get_git_provider,
@@ -576,7 +576,7 @@ class PRDescription:
         pr_file_changes = []
         for idx, (key, value) in enumerate(self.data.items()):
             if key == 'changes_diagram':
-                pr_body += f"### {PRDescriptionHeader.DIAGRAM_WALKTHROUGH.value}\n\n"
+                pr_body += f"### {get_ui_string('diagram_walkthrough', PRDescriptionHeader.DIAGRAM_WALKTHROUGH.value)}\n\n"
                 pr_body += f"{value}\n\n"
                 continue
             if key == 'pr_files':
@@ -584,7 +584,7 @@ class PRDescription:
             else:
                 key_publish = key.rstrip(':').replace("_", " ").capitalize()
                 if key_publish == "Type":
-                    key_publish = "PR Type"
+                    key_publish = get_ui_string('pr_type', 'PR Type')
                 # elif key_publish == "Description":
                 #     key_publish = "PR Description"
                 pr_body += f"### **{key_publish}**\n"
@@ -603,7 +603,7 @@ class PRDescription:
                     initial_status = " open"
                 else:
                     initial_status = ""
-                changes_walkthrough = f"<details{initial_status}> <summary><h3> {PRDescriptionHeader.FILE_WALKTHROUGH.value}</h3></summary>\n\n"
+                changes_walkthrough = f"<details{initial_status}> <summary><h3> {get_ui_string('file_walkthrough', PRDescriptionHeader.FILE_WALKTHROUGH.value)}</h3></summary>\n\n"
                 changes_walkthrough += f"{changes_walkthrough_table}\n\n"
                 changes_walkthrough += "</details>\n\n"
             elif key.lower().strip() == 'description':

@@ -82,28 +82,36 @@ async def run_action():
     except Exception as e:
         get_logger().info(f"github action: failed to apply repo settings: {e}")
 
-    # Append the response language in the extra instructions
+    # Inject response language instructions into prompts and extra_instructions
     try:
         response_language = get_settings().config.get('response_language', 'en-us')
         if response_language.lower() != 'en-us':
             get_logger().info(f'User has set the response language to: {response_language}')
-
-            lang_instruction_text = f"Your response MUST be written in the language corresponding to locale code: '{response_language}'. This is crucial."
+            lang_instruction_text = (
+                f"Your response MUST be written in the language corresponding to locale code: "
+                f"'{response_language}'. This applies to ALL text you output."
+            )
+            lang_prefix = (
+                f"IMPORTANT: Respond entirely in the language for locale '{response_language}'. "
+                f"Do not use English except for code, file names, and technical identifiers.\n\n"
+            )
             separator_text = "\n======\n\nIn addition, "
-
             for key in get_settings():
                 setting = get_settings().get(key)
                 if str(type(setting)) == "<class 'dynaconf.utils.boxing.DynaBox'>":
-                    if key.lower() in ['pr_description', 'pr_code_suggestions', 'pr_reviewer']:
-                        if hasattr(setting, 'extra_instructions'):
-                            extra_instructions = setting.extra_instructions
-
-                            if lang_instruction_text not in str(extra_instructions):
-                                updated_instructions = (
-                                    str(extra_instructions) + separator_text + lang_instruction_text
-                                    if extra_instructions else lang_instruction_text
-                                )
-                                setting.extra_instructions = updated_instructions
+                    # Prepend to system prompts (prompt config keys end with _prompt)
+                    if hasattr(setting, 'system') and isinstance(setting.system, str):
+                        if not setting.system.startswith("IMPORTANT: Respond entirely"):
+                            setting.system = lang_prefix + setting.system
+                    # Also append to extra_instructions as secondary reinforcement
+                    if hasattr(setting, 'extra_instructions'):
+                        extra_instructions = setting.extra_instructions
+                        if lang_instruction_text not in str(extra_instructions):
+                            updated_instructions = (
+                                str(extra_instructions) + separator_text + lang_instruction_text
+                                if extra_instructions else lang_instruction_text
+                            )
+                            setting.extra_instructions = updated_instructions
     except Exception as e:
         get_logger().info(f"github action: failed to apply language-specific instructions: {e}")
     # Handle pull request opened event

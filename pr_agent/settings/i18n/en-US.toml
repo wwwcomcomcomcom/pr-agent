@@ -1,0 +1,47 @@
+[ui]
+# Section headers
+pr_reviewer_header = "## PR Reviewer Guide"
+pr_reviewer_header_incremental = "## Incremental PR Reviewer Guide"
+incremental_review_note = "Review for commits since previous PR-Agent review"
+key_observations_intro = "Here are some key observations to aid the review process:"
+
+# Review table labels
+estimated_effort_label = "Estimated effort to review"
+no_relevant_tests = "No relevant tests"
+pr_contains_tests = "PR contains tests"
+contribution_time_estimate = "Contribution time estimate (best, average, worst case):"
+time_minutes = "minutes"
+
+# Security
+no_security_concerns = "No security concerns identified"
+security_concerns = "Security concerns"
+
+# TODO
+no_todo_sections = "No TODO sections"
+todo_sections = "TODO sections"
+
+# Issues
+no_major_issues = "No major issues detected"
+recommended_focus_areas = "Recommended focus areas for review"
+possible_issue = "Possible Issue"
+
+# Can be split
+no_multiple_pr_themes = "No multiple PR themes"
+multiple_pr_themes = "Multiple PR themes"
+sub_pr_theme = "Sub-PR theme:"
+relevant_files = "Relevant files:"
+
+# Ticket compliance
+ticket_compliance_analysis = "Ticket compliance analysis"
+fully_compliant = "Fully compliant"
+partially_compliant = "Partially compliant"
+pr_code_verified = "PR Code Verified"
+not_compliant = "Not compliant"
+compliant_requirements = "Compliant requirements:"
+non_compliant_requirements = "Non-compliant requirements:"
+requires_further_verification = "Requires further human verification:"
+
+# PR description
+pr_type = "PR Type"
+file_walkthrough = "File Walkthrough"
+diagram_walkthrough = "Diagram Walkthrough"

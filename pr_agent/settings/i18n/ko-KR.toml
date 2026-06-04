@@ -1,0 +1,47 @@
+[ui]
+# 섹션 헤더
+pr_reviewer_header = "## PR 리뷰어 가이드"
+pr_reviewer_header_incremental = "## 증분 PR 리뷰어 가이드"
+incremental_review_note = "이전 PR-Agent 리뷰 이후 커밋에 대한 리뷰"
+key_observations_intro = "리뷰 프로세스를 돕기 위한 주요 관찰 사항:"
+
+# 리뷰 테이블 레이블
+estimated_effort_label = "리뷰 예상 소요 시간"
+no_relevant_tests = "관련 테스트 없음"
+pr_contains_tests = "PR에 테스트 포함됨"
+contribution_time_estimate = "기여 시간 예상 (최선, 평균, 최악):"
+time_minutes = "분"
+
+# 보안
+no_security_concerns = "보안 문제 없음"
+security_concerns = "보안 우려 사항"
+
+# TODO
+no_todo_sections = "TODO 항목 없음"
+todo_sections = "TODO 항목"
+
+# 문제
+no_major_issues = "주요 문제 없음"
+recommended_focus_areas = "리뷰 집중 권장 영역"
+possible_issue = "잠재적 문제"
+
+# 분리 가능 여부
+no_multiple_pr_themes = "단일 PR 테마"
+multiple_pr_themes = "복수 PR 테마"
+sub_pr_theme = "하위 PR 테마:"
+relevant_files = "관련 파일:"
+
+# 티켓 준수
+ticket_compliance_analysis = "티켓 준수 분석"
+fully_compliant = "완전히 준수"
+partially_compliant = "부분적으로 준수"
+pr_code_verified = "PR 코드 검증됨"
+not_compliant = "미준수"
+compliant_requirements = "준수 요구사항:"
+non_compliant_requirements = "미준수 요구사항:"
+requires_further_verification = "추가 인간 검증 필요:"
+
+# PR 설명
+pr_type = "PR 유형"
+file_walkthrough = "파일 변경 요약"
+diagram_walkthrough = "다이어그램 요약"
